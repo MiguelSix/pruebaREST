@@ -9,6 +9,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -73,29 +75,36 @@ public class AutoDao {
 
     @SuppressWarnings("deprecation")
 	public Auto getAuto(int id) {
-
         try {
-            return (Auto) jdbcTemplate.queryForObject("SELECT * FROM auto WHERE idauto=?", new Object[]{id}, new AutoRowMapper());
-        } catch (Exception e) {
-            LOGGER.error("Error al obtener el auto en la base de datos", e);
+            return jdbcTemplate.queryForObject("SELECT * FROM auto WHERE idauto=?", new Object[]{id}, new AutoRowMapper());
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.warn("Auto with ID {} not found in the database", id);
             return null;
+        } catch (DataAccessException e) {
+            LOGGER.error("Error accessing database to get auto with ID {}", id, e);
+            throw e;
         }
-        
-        //return (Auto) jdbcTemplate.queryForObject("SELECT * FROM auto WHERE idauto=?", new Object[]{id}, new AutoRowMapper());
     }
 
     public int deleteAuto(int id) {
-        String sql = "DELETE FROM auto WHERE idauto = ?";
-        try{
-            if(getAuto(id) == null){
-                throw new Exception("ERROR: El auto no existe en la base de datos");
+    	
+        try {
+            Auto existingAuto = getAuto(id);
+
+            if (existingAuto == null) {
+                LOGGER.warn("Auto with ID {} not found in the database. Unable to delete.", id);
+                return 0; // Indicate that the deletion was not successful
             }
+
+            String sql = "DELETE FROM auto WHERE idauto = ?";
             jdbcTemplate.update(sql, id);
-            return 1;
-        } catch(Exception e){
-            LOGGER.error("Error al eliminar el auto en la base de datos", e);
-            return 0;
+            return 1; // Indicate successful deletion
+
+        } catch (Exception e) {
+            LOGGER.error("Error deleting auto with ID {} from the database", id, e);
+            return 0; // Indicate that an error occurred during deletion
         }
+
     }
 
 }

@@ -43,17 +43,20 @@ public class AutoBusiness {
 	}
 
 	public boolean deleteAuto(int id) {
-		try{
-			if(autoDao.deleteAuto(id) != 1){
-				throw new Exception("Error al eliminar el auto en la base de datos");
-			} else {
-				LOGGER.info("Auto eliminado correctamente" + id);
-				return true;
-			}
-		}catch(Exception e){
-			LOGGER.error("Error al eliminar el auto en la base de datos", e);
-			return false;
-		}
+		try {
+	        int deletionResult = autoDao.deleteAuto(id);
+
+	        if (deletionResult != 1) {
+	            LOGGER.warn("Auto with ID {} not found in the database. Unable to delete.", id);
+	            return false; // Indicate that the deletion was not successful
+	        } else {
+	            LOGGER.info("Auto deleted successfully: {}", id);
+	            return true; // Indicate successful deletion
+	        }
+	    } catch (Exception e) {
+	        LOGGER.error("Error deleting auto with ID {} from the database", id, e);
+	        return false; // Indicate that an error occurred during deletion
+	    }
 	}
 
 }

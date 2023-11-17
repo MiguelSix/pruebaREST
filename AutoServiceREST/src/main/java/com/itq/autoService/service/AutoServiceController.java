@@ -59,14 +59,14 @@ public class AutoServiceController {
 	public Ack deleteAuto(@RequestParam(value =  "id") int id) {
 		Ack ack = new Ack();
 		if(autoBusiness.deleteAuto(id) == true) {
-			LOGGER.info("Auto eliminado correctamente");
+			LOGGER.info("Auto with id {" + id + "} deleted successfully");
 			ack.setCode(0);
-			ack.setDescripcion("Auto eliminado correctamente");
+			ack.setDescripcion("Auto with id {" + id + "} deleted successfully");
 			return (ack);
 		} else {
-			LOGGER.error("Error al eliminar el auto en la base de datos");
+			LOGGER.error("Error accessing database to get auto with ID {" + id + "}");
 			ack.setCode(1);
-			ack.setDescripcion("Error al eliminar el auto en la base de datos");
+			ack.setDescripcion("Error accessing database to get auto with ID {" + id + "}");
 			return (ack);
 		}
 	}
