@@ -4,16 +4,16 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+//import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 public class Auto {
 	
-	//@JsonProperty("id")
+	@JsonProperty("id")
 	//@Pattern(regexp="[A-Z]{2}[0-9]{3}")
-	private String idAuto;
+	private int idAuto;
 	@Min(1995)
 	@Max(2026)
 	@NotNull
@@ -24,10 +24,10 @@ public class Auto {
 	@NotEmpty
 	private String color;
 	
-	public String getIdAuto() {
+	public int getIdAuto() {
 		return idAuto;
 	}
-	public void setIdAuto(String idAuto) {
+	public void setIdAuto(int idAuto) {
 		this.idAuto = idAuto;
 	}
 	public int getModelo() {
